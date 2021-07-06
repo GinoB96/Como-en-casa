@@ -1,0 +1,239 @@
+<div class="container-fluid">
+  <div class="row justify-content-md-center">
+
+    <!-- SECTOR DE BARRAS DE NAVEGACION DE SUBCATEGORIAS -->
+
+    <div class="col-sx-1 col-sm-2 col-md-2 col-lg-2" style="background-color:#fdb700;">
+        #set( $cont = 1 )
+        #foreach($c is $categoria)
+            <b>$c.nombre_categoria</b>
+                        <ul class="navbar-nav">
+                          #foreach ($sc is $c.getSubCategoriaList()) 
+                              <li class="nav-item " id=$sc.getNombre_categoria() onclick="showDiv($cont)">
+                                <a class="nav-link" style="color:black" href="#">$sc.getNombre_categoria()</a>
+                              </li>
+                              #set( $cont = $cont + 1 )
+                          #end
+                        </ul>
+        #end
+        
+    </div>
+
+<!-- SECTOR DE MOSTRAR ITEMS -->
+
+    <div class="col-sx-1 col-sm-4 col-md-4 col-lg-4" style="background-color:#c8c7cc;"> 
+      #set( $cont = 1 )
+      #foreach($c is $categoria)
+        #foreach ($sc is $c.getSubCategoriaList())
+            <div id="ele-$cont" style="display: none;">
+                
+                #if ($c.id_categoria == 2)
+                    #foreach($p is $sc.getProductoList())
+                        <br>
+                        <div>
+                            <h2 class="text-center"><b> $p.getNombre() </b></h2>
+                            <p>Sabor: $p.getSabor() <p>
+                            <p>Litros: $p.getLitros() <p>
+                            <p>Precio: $p.getPrecio() <p>
+
+                            <div class="container">
+                            <!-- Button to Open the Modal -->
+                            <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#myModal$p.getId_producto()"> Añadir al carrito </button>
+
+                            <!-- The Modal -->
+                            <div class="modal fade" id="myModal$p.getId_producto()">
+                              <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+
+                                  <!-- Modal Header -->
+                                  <div class="modal-header">
+                                    <h4 class="modal-title">$p.getNombre()</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                  </div>
+                                  <!-- Modal body -->
+                                  <div class="modal-body">
+                                    Sabor: $!{p.getSabor()}<br>
+                                    $p.getLitros() Lts<br>
+                                    Precio: $$p.getPrecio() <br>
+                                    <textarea id="nota$p.getId_producto()" rows="3" cols="40" placeholder="Nota del pedido..."></textarea>
+                                  </div>
+
+                                  <!-- Modal footer -->
+                                  <div class="modal-footer">
+                                  <div class="container">
+                                  <div class="row align-items-center">
+                                  <div class="col">
+                                    <p>Cantidad</p>
+                                  </div>
+                                  <div class="col">
+                                  <button type="button" class="btn btn-danger btn-sm" onclick="restar($p.getId_producto())">-</button> 
+                                   <input class="pantallaC" id="cantidad$p.getId_producto()" type="text" value="1" readonly size="1">
+                                  <button type="button" class="btn btn-danger btn-sm" onclick="sumar($p.getId_producto())">+</button>
+                                  </div>
+                                  </div>
+                                  </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button"  class="btn btn-danger" data-dismiss="modal" onclick="sendOrden($p.getId_producto(),$p.getId_producto(),$p.getId_producto())">Añadir al carrito</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                         </div>
+                        <br>
+                    #end
+                #end
+                
+                #if ($c.id_categoria == 1)
+                    #foreach($p is $sc.getProductoList())
+                        <br>
+                        <div>
+                            <h2 class="text-center"><b> $p.getNombre() </b></h2> 
+                            <p>Ingredientes: $p.getDescripcion() <p> 
+                            <p>Precio: $p.getPrecio() <p>                          
+
+                            <div class="container">
+                            <!-- Button to Open the Modal -->
+                            <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#myPlato$p.getId_producto()">
+                              Añadir al carrito
+                            </button>
+
+                            <!-- The Modal -->
+                            <div class="modal fade" id="myPlato$p.getId_producto()">
+                              <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+
+                                  <!-- Modal Header -->
+                                  <div class="modal-header">
+                                    <h4 class="modal-title">$p.getNombre()</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                  </div>
+                                  <!-- Modal body -->
+                                  <div class="modal-body">
+                                    Ingredientes: $p.getDescripcion()<br>
+                                    Precio: $$p.getPrecio()<br>
+                                    <textarea id="nota$p.getId_producto()" rows="3" cols="40" placeholder="Nota del pedido..."></textarea>
+                                  </div>
+
+                                  <!-- Modal footer -->
+                                  <div class="modal-footer">
+                                    <div class="container">
+                                    <div class="row align-items-center">
+                                    <div class="col">
+                                        <p>Cantidad</p>
+                                    </div>
+                                    <div class="col">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="restar($p.getId_producto())">-</button> 
+                                            <input class="pantallaC" id="cantidad$p.getId_producto()" type="text" value="1" readonly size="1">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="sumar($p.getId_producto())">+</button>
+                                    </div>
+                                    </div>
+                                    </div>
+                                  </div>
+
+                                  <div class="modal-footer">
+                                    <button type="button"  class="btn btn-danger" data-dismiss="modal" onclick="sendOrden($p.getId_producto(),$p.getId_producto(),$p.getId_producto())">Añadir al carrito</button>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+                        </div>
+                        <br>
+                    #end
+                #end
+
+            </div> 
+            #set( $cont = $cont + 1 )                 
+        #end
+       #end
+       
+    </div>
+
+    <!-- SECTOR DE MUSTRA DE CARRITO -->
+
+    <div class="col-sx-1 col-sm-3 col-md-3 col-lg-3" style="background-color:#fdb700;">
+      <center><h2>Tu carrito</h2></center>
+      <div class="container">
+        <div id="divCarrito" > </div>
+        <br><div id="divTotalCarrito"> </div>
+        <br> 
+        <form>
+            <input type="submit" value="ConfimarCarrito" class="btn btn-danger" formaction="/confirmarCarrito"> 
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+</nav>
+
+<script>
+
+  function showDiv(data) {
+    $("#ele-" + data).addClass('visibleClass');
+    hideElement($cont, data);
+  }
+
+  function hideElement(total, active) {
+    for (i = 1; i <= total; i++) {
+      if (i != active)
+        $("#ele-" + i).removeClass('visibleClass');
+    }
+  }
+
+  function sumar(id){
+    cadena="";
+    dis=document.getElementById("cantidad"+id);
+    cadena=parseFloat(document.getElementById("cantidad"+id).value)+1;
+    dis.value=cadena;
+  }
+
+  function restar(id){
+    cadena="";
+    dis=document.getElementById("cantidad"+id);
+    if (dis.value>1){
+        cadena=parseFloat(document.getElementById("cantidad"+id).value)-1;
+        dis.value=cadena;
+    }
+  }
+    
+  function sendOrden(idP,cantidad,nota){
+    cant=document.getElementById("cantidad"+cantidad).value;
+    notaEspecial=document.getElementById("nota"+nota).value;
+    $.ajax({url: "agregar",data:{"idP":idP,"cantidad":cant,"nota":notaEspecial}, success: function(result){
+                actualizarCarrito();
+                actualizarTotalCarrito();
+                Swal.fire({
+                        position: 'center',
+                        type: 'success',
+                        title: result,
+                        showConfirmButton: false,
+                        timer: 1000
+                });
+    	}});
+  }
+
+  function actualizarCarrito(){
+    $.ajax({url: "actualizarCarrito", success: function(result){
+    	$("#divCarrito").empty();
+        $("#divCarrito").append(result);
+    }});
+  }
+
+  function actualizarTotalCarrito(){
+    $.ajax({url: "totalCarrito", success: function(result){
+       $("#divTotalCarrito").empty();
+       $("#divTotalCarrito").append("Total: $"+result);
+    }});
+  }   
+
+$( document ).ready(function() {
+    actualizarCarrito();
+    actualizarTotalCarrito();
+});
+
+</script>

@@ -1,0 +1,113 @@
+<div class="content-wrapper" style="min-height: 735px;">
+
+    <!-- SECTOR DE BUSCAR INSUMOS -->
+    <section class="content-header">
+        <div class="row" style="background-color: yellow">
+
+            <div  class="searchFormat">
+		<input type="text" class="form-control" id="findByNombre" placeholder="Buscar por nombre">  	
+            </div>
+            <div >    
+                <span class="input-group-btn">   
+                    <button class="btn btn-default" type="button" onclick="getIdN()">
+                        <img src="img/lupa.jpg"  style="width:40px;">
+                    </button>
+		</span>
+            </div> 
+
+            <div class="searchFormat"> 
+                <input type="text" class="form-control" id="findByCodigo" placeholder="Buscar por código">
+            </div>                    
+            <div>    
+                <span class="input-group-btn">   
+                    <button class="btn btn-default" type="button" onclick="getIdI()" >
+                        <img src="img/lupa.jpg"  style="width:40px;">
+                    </button>
+		</span>
+            </div> 
+
+            <div class="searchFormat"> 
+                <select onChange="getIdTI()" id="selectTI">
+                    <option value="" disabled selected style="display:none;"></option>
+                    <option value="0" >ALL</option>
+                    #foreach($ti is $tipoI)
+                        <option value="$ti.id_TipoInsumo">$ti.nombreTI</option>
+                    #end
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTOR DE MOSTRAR INSUMOS-->
+    <div class="box" style="background-color: #fdb700;">
+        <div class="box-header with-border">
+            <center><h3 class="box-title">Listado de Insumos</h3></center>
+        </div>
+
+        <div class="box-body">
+            <div class="table-responsive">
+                <table id="tabla" class="table table-condensed table-hover table-striped ">
+                    <thead>
+                            <tr>
+                                <th class="text-center">Código</th>
+                                <th class="text-center">Imagen</th>
+                                <th>Producto </th>
+                                <th>Rubro </th>
+                                <th class="text-center">Stock</th>
+                                <th class="text-right">Stock Minimo</th>
+                                <th class="text-right">Costo</th>
+                                <th class="text-right"></th>
+                                <th></th>
+                            </tr>
+                    </thead>
+                    <tbody>
+                        #foreach($i is $insumos)
+                            <tr #if ($i.stock<$i.stock_minimo) style="background-color: #b0201b" #end>
+                                <td class="text-center">$i.id_insumo</td>
+                                <td class="text-center"> <img class="img-rounded" src="$i.imagen" style="width:80px;"> </td>
+                                <td>$i.nombre</td>
+                                <td>$i.nombreTI</td>
+                                <td class="text-center">$i.stock</td>
+                                <td class="text-center">$i.stock_minimo</td>
+                                <td class="text-center">$i.costo</td>
+                            </tr>
+                        #end
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    function getIdTI(){
+        var valor = document.getElementById("selectTI").value; 
+        actualizarTabla(valor,0);
+    }
+
+    function getIdI(){
+        var valor = document.getElementById("findByCodigo").value;
+        actualizarTabla(valor,1);
+    }
+
+    function getIdN(){
+        var valor = document.getElementById("findByNombre").value;
+        actualizarTabla(valor,2);
+    }
+
+    function actualizarTabla(id,op){
+        $.ajax({url: "actualizarTabla",data:{"id":id,"op":op}, success: function(result){
+            $("#findByCodigo").val("")
+            $("#findByNombre").val("")
+            $("#tabla").find("tbody").empty()
+            if(result==""){
+                $("#tabla").find("tbody").append("<h2 class=\"text-center\"><b>El Insumo ingresado no existe</b></h2>")  
+            }else{
+                $("#tabla").find("tbody").append(result)
+            }
+        }});
+    }
+
+</script>

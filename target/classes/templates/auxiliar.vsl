@@ -1,0 +1,114 @@
+<!-- SECTOR DE CONTACTO-->
+    <div class="box" style="background-color: #fdb700;">
+        <div class="box-header with-border">
+
+            <section class="content-header">
+                    <div class="row" style="background-color: yellow">
+
+                        <h4 class="searchFormat">Rubro</h4>
+                        <div class="searchFormat"> 
+                            <select onChange="getRubroID()" id="selectRubro">
+                                <option value="" disabled selected style="display:none;"></option>
+                                #foreach($r is $rubros)
+                                    <option value="$r.id_rubro">$r.nombre</option>
+                                #end
+                            </select>
+                        </div>
+
+                        <h4 class="searchFormat">Contacto</h4>
+                        <div class="searchFormat"> 
+                            <select onChange="nombreFuncion()" id="selectContacto" style="width:310px;">
+                                <option value="" disabled selected style="display:none;"></option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-6" style="clear: both;">
+                            <button type="button" id="modalButton" class="btn btn-info" data-toggle="modal" data-target="#verMasModal" onclick="getProveedorID()" style="float: right;" disabled>
+                                Ver Proveedor
+                            </button>
+                        </div>
+
+
+                    </div>
+            </section>
+
+        </div>
+
+        <!-- SECTOR DE REGISTRO INSUMOS-->
+        <div class="box-body">
+            <div class="table-responsive">
+                <table id="tabla" class="table table-condensed table-hover table-striped ">
+                    <thead>
+                            <tr align="center">
+                                            <th><p>Nombre</p></th>
+                                            <th><p>Cantidad</p></th>
+                                            <th><p>Nota especial</p></th>
+                                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr align="center">
+                                        <th><input type="" name=""></th>
+                                        <th><input type="" name="" size="2"></th>
+                                        <th><input type="" name="" size="70"></th>
+                                    </tr>
+                    </tbody>
+                    <tfoot>
+                        <table class="table table-borderless" style="background-color:#fdb700">
+        <tr align="center">
+            <th><button type="button" class="btn btn-success">Enviar</button></th>
+            <th><button type="button" class="btn btn-danger">Agregar otra fila</button></th>
+        </tr>
+    </table>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<!-- The Modal -->
+    <div class="modal fade" id="verMasModal">
+       <div class="modal-dialog modal-dialog-centered">
+	    <div class="modal-content">
+                <!-- Modal Header -->
+	        <div class="modal-header">
+                    <h4 class="modal-title">Info proveedor</h4>
+	            <button type="button" class="close" data-dismiss="modal">&times;</button>
+		</div>
+                <!-- Modal body -->
+
+		<div class="modal-body" id="infoProveedor">
+                    <p>Seleccione un Contacto</p>
+		</div>
+
+            </div>
+	</div>
+    </div>
+
+<script>
+
+    function getRubroID(){
+        var valor = document.getElementById("selectRubro").value; 
+        document.getElementById("modalButton").disabled = false;
+        actualizarContactos(valor);
+    }
+
+    function getProveedorID(){
+        var valor = document.getElementById("selectContacto").value; 
+        actualizarModal(valor);
+    }
+
+    function actualizarContactos(id){
+        $.ajax({url:"actualizarContactos",data:{"id":id}, success: function(result){
+            $("#selectContacto").empty()
+            $("#selectContacto").append(result)
+        }});
+    }
+    
+    function actualizarModal(id){
+        $.ajax({url:"actualizarModal",data:{"id":id}, success: function(result){
+            $("#infoProveedor").empty()
+            $("#infoProveedor").append(result)
+        }});
+    }
+
+</script>

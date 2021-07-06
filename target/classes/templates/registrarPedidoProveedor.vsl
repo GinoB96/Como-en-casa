@@ -1,0 +1,209 @@
+<!-- SECTOR DE CONTACTO-->
+    <div class="box" style="background-color: #fdb700;">
+        <div class="box-header with-border">
+
+            <section class="content-header">
+                    <div class="row" style="background-color: #fdb700">
+
+                        <h4 class="searchFormat">Rubro</h4>
+                        <div class="searchFormat"> 
+                            <select onChange="getRubroID()" id="selectRubro">
+                                <option value="" disabled selected style="display:none;"></option>
+                                #foreach($r is $rubros)
+                                    <option value="$r.id_rubro">$r.nombre</option>
+                                #end
+                            </select>
+                        </div>
+
+                        <h4 class="searchFormat">Contacto</h4>
+                        <div class="searchFormat"> 
+                            <select  id="selectContacto" style="width:310px;">
+                                <option value="" disabled selected style="display:none;"></option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-6" style="clear: both;">
+                            <button type="button" id="modalButton" class="btn btn-info" data-toggle="modal" data-target="#verMasModal" onclick="getProveedorID()" style="float: right;" disabled>
+                                Ver Proveedor
+                            </button>
+                        </div>
+
+
+                    </div>
+            </section>
+
+        </div>
+
+        <!-- SECTOR DE REGISTRO INSUMOS-->
+        <div class="box-body">
+            <div class="table-responsive">
+                <table id="tabla" class="table table-condensed table-hover table-striped ">
+                    <thead>
+                            <tr align="center">
+                                <th class="text-center">Rubro</th>
+                                <th class="text-center">Nombre</th>
+                                <th class="text-center">Cantidad</th>
+                                <th class="text-center">Nota especial</th>
+                            </tr>
+                    </thead>
+                    <tbody id="registro">
+
+
+                        <tr align="center" id="fila$cont">
+                            #set( $cont = 1)
+                            <th>
+                                <div class="searchFormat"> 
+                                    <select onChange="getIdTI($cont)" id="selectTI$cont">
+                                        <option value="" disabled selected style="display:none;"></option>
+                                        #foreach($ti is $tipoI)
+                                            <option value="$ti.id_TipoInsumo">$ti.nombreTI</option>
+                                        #end
+                                    </select>
+                                </div>
+                            </th>
+                            <th> 
+                                <select  id="selectInsumo$cont" style="width:310px;">
+                                    <option value="" disabled selected style="display:none;"></option>
+                                </select>
+                            </th>
+                            <th><input id="cant$cont" type="" name="" size="2"></th>
+                            <th><input id="notaE$cont" type="" name="" size="70"></th>
+                        </tr>
+
+
+
+                    </tbody>
+                    <tfoot>
+                        <div class="row" style="background-color: yellow">   
+                                <th>
+                                    <button type="button" class="btn btn-success" onclick="enviarRegistro()">Enviar</button>
+                                </th>
+                                <th>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="restar()">-</button> 
+                                        <input class="pantallaC" id="contadorFilas" type="text" value="1" style="margin: auto;" readonly size="1">
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="sumar()">+</button>
+                                    <button type="button" class="btn btn-danger" onclick="agregarFilas()">Agregar filas</button>
+                                </th>
+                                
+                        </div>   
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<!-- The Modal -->
+    <div class="modal fade" id="verMasModal">
+       <div class="modal-dialog modal-dialog-centered">
+	    <div class="modal-content">
+                <!-- Modal Header -->
+	        <div class="modal-header">
+                    <h4 class="modal-title">Info proveedor</h4>
+	            <button type="button" class="close" data-dismiss="modal">&times;</button>
+		</div>
+                <!-- Modal body -->
+
+		<div class="modal-body" id="infoProveedor">
+                    <p>Seleccione un Contacto</p>
+		</div>
+
+            </div>
+	</div>
+    </div>
+
+<script>
+    
+    var cantidadFilas=$cont;
+    
+    function getRubroID(){
+        var valor = document.getElementById("selectRubro").value; 
+        document.getElementById("modalButton").disabled = false;
+        actualizarContactos(valor);
+    }
+
+    function getProveedorID(){
+        var valor = document.getElementById("selectContacto").value; 
+        actualizarModal(valor);
+    }
+
+    function getIdTI(idFila){
+        var valor = document.getElementById("selectTI"+idFila).value; 
+        actualizarSelectInsumo(valor,idFila);
+    }
+
+    function actualizarSelectInsumo(id,idFila){
+        $.ajax({url:"actualizarSelectInsumo",data:{"id":id}, success: function(result){
+            $("#selectInsumo"+idFila).empty()
+            $("#selectInsumo"+idFila).append(result)
+        }});
+    }
+    
+    function actualizarContactos(id){
+        $.ajax({url:"actualizarContactos",data:{"id":id}, success: function(result){
+            $("#selectContacto").empty()
+            $("#selectContacto").append(result)
+        }});
+    }
+    
+    function actualizarModal(id){
+        $.ajax({url:"actualizarModal",data:{"id":id}, success: function(result){
+            $("#infoProveedor").empty()
+            $("#infoProveedor").append(result)
+        }});
+    }
+
+    function sumar(){
+        cadena="";
+        dis=document.getElementById("contadorFilas");
+        cadena=parseFloat(document.getElementById("contadorFilas").value)+1;
+        dis.value=cadena;
+    }
+
+    function restar(){
+        cadena="";
+        dis=document.getElementById("contadorFilas");
+        if (dis.value>1){
+            cadena=parseFloat(document.getElementById("contadorFilas").value)-1;
+            dis.value=cadena;
+        }
+    }
+    
+    function agregarFilas(){
+        dis=document.getElementById("contadorFilas").value;
+        $.ajax({url:"agregarFilas",data:{"contadorFilas":dis,"cantidadFilas":cantidadFilas}, success: function(result){
+            $("#registro").append(result)
+            cantidadFilas=cantidadFilas+"+"+dis;
+            cantidadFilas=eval(cantidadFilas);
+        }});
+    }
+
+    function enviarRegistro(){
+
+        var contacto = document.getElementById("selectContacto").value;
+    	var rta="{";
+    	for (var i = 1; i<cantidadFilas+1; i++) {
+            rta=rta+"o"+i+":";
+            rta=rta+"{";
+            rta=rta+"ti:"+document.getElementById("selectTI"+i).value+",";
+            rta=rta+"i:"+document.getElementById("selectInsumo"+i).value+",";
+            rta=rta+"c:"+document.getElementById("cant"+i).value+",";
+            rta=rta+"ne:'"+document.getElementById("notaE"+i).value+"'";
+            rta=rta+"},";
+            
+    	}
+    	rta=rta+"oX:{}";
+        rta=rta+"}";
+
+        $.ajax({url:"confirmarPedidoProveedor",data:{"rta":rta,"cantidadFilas":cantidadFilas,"contacto":contacto}, success: function(result){
+            Swal.fire({
+                        position: 'center',
+                        type: 'success',
+                        title: result,
+                        showConfirmButton: false,
+                        timer: 1000
+            });
+        }});
+    }
+
+
+</script>
